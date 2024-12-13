@@ -100,10 +100,6 @@ Profiles are stored in `~/.git-profiles.json`
 
 All the contributions are welcome
 
-## License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
 ## Support
 
 If you encounter any issues or have suggestions, please file an issue on GitHub.
