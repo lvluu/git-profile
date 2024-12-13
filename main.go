@@ -90,7 +90,7 @@ func interactiveProfileInput(existing *Profile) Profile {
 
 	// Name input
 	if existing != nil && existing.Name != "" {
-		fmt.Printf("Enter name [current: %s, press Enter to keep]: ", existing.Name)
+		fmt.Printf("\nEnter name [current: %s, press Enter to keep]: ", existing.Name)
 	} else {
 		fmt.Print("Enter name: ")
 	}
@@ -157,7 +157,7 @@ func main() {
 		Version: fmt.Sprintf("%s (commit: %s, built: %s)", version, commit, date),
 	}
 
-	rootCmd.SetVersionTemplate("Git Profile CLI\nVersion: {{.Version}}")
+	rootCmd.SetVersionTemplate("🦑 Git Profile CLI\nVersion: {{.Version}}")
 
 	var exportCmd = &cobra.Command{
 		Use:   "export [output-file]",
@@ -211,11 +211,11 @@ func main() {
 				if profile.Name == activeName && profile.Email == activeEmail {
 					activeMarker = " (active)"
 				}
-				fmt.Printf("Profile: %s%s\n", name, activeMarker)
-				fmt.Printf("  Name:  %s\n", profile.Name)
-				fmt.Printf("  Email: %s\n", profile.Email)
+				fmt.Printf("💻 Profile: %s%s\n", name, activeMarker)
+				fmt.Printf("  🖖 Name:  %s\n", profile.Name)
+				fmt.Printf("  📧 Email: %s\n", profile.Email)
 				if profile.Signing.Key != "" {
-					fmt.Printf("  Signing Key: %s\n", profile.Signing.Key)
+					fmt.Printf("  🔑 Signing Key: %s\n", profile.Signing.Key)
 				}
 				fmt.Println()
 			}
