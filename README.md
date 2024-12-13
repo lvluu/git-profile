@@ -1,43 +1,109 @@
 # Git Profile CLI
 
 ## Overview
-`git-profile` is a simple CLI tool to manage multiple Git profiles easily.
+
+`git-profile` is a powerful command-line tool that simplifies managing multiple Git profiles across different projects and environments.
+
+## Features
+
+- 🔄 Easily switch between Git profiles
+- ➕ Interactively add new profiles
+- ✏️ Edit existing profiles
+- 🗑️ Remove profiles
+- 📦 Export and import profile configurations
+- 🖥️ Simple, intuitive CLI interface
 
 ## Installation
 
-### Go Install
-```bash
-go install github.com/yourusername/git-profile@latest
-```
+### Go Install (Recommended)
 
-### Homebrew (macOS)
 ```bash
-brew tap yourusername/git-profile
-brew install git-profile
+go install github.com/lvluu/git-profile@latest
 ```
 
 ### Manual Installation
-Download the appropriate binary from [Releases](https://github.com/yourusername/git-profile/releases)
+
+Download the appropriate binary for your platform from the [Releases](https://github.com/lvluu/git-profile/releases) page.
 
 ## Usage
 
-### List Profiles
+### Listing Profiles
+
 ```bash
 git profile ls
 ```
 
-### Add a Profile
+### Adding a Profile
+
 ```bash
-git profile add work "John Doe" john.doe@company.com
+git profile add
 ```
 
-### Apply a Profile
+- Interactively enter profile name, username, and email
+- Optionally add a signing key
+
+### Editing a Profile
+
 ```bash
-git profile apply work
+git profile edit
 ```
+
+- Select a profile to modify
+- Update details interactively
+
+### Removing a Profile
+
+```bash
+git profile rm
+```
+
+- Select a profile to remove
+- Confirm deletion
+
+### Applying a Profile
+
+```bash
+git profile apply
+```
+
+- Select a profile to apply globally
+
+### Exporting Profiles
+
+```bash
+git profile export [output-file]
+```
+
+- Export all profiles to a JSON file
+- If no file specified, exports to `~/git-profiles-export.json`
+
+### Importing Profiles
+
+```bash
+git profile import <input-file>
+```
+
+- Import profiles from a JSON file
+- Choose to merge or replace existing profiles
+
+### Checking Version
+
+```bash
+git profile -v
+```
+
+## Configuration
+
+Profiles are stored in `~/.git-profiles.json`
 
 ## Contributing
-Pull requests are welcome. For major changes, please open an issue first.
+
+All the contributions are welcome
 
 ## License
-[MIT](https://choosealicense.com/licenses/mit/)
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+## Support
+
+If you encounter any issues or have suggestions, please file an issue on GitHub.

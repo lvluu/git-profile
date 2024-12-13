@@ -140,6 +140,38 @@ func main() {
 
 	rootCmd.SetVersionTemplate("Git Profile CLI\nVersion: {{.Version}}")
 
+	var exportCmd = &cobra.Command{
+		Use:   "export [output-file]",
+		Short: "Export Git profiles to a JSON file",
+		Run: func(cmd *cobra.Command, args []string) {
+			var outputPath string
+			if len(args) > 0 {
+				outputPath = args[0]
+			}
+
+			if err := configManager.Export(outputPath); err != nil {
+				fmt.Println("Export failed:", err)
+				os.Exit(1)
+			}
+		},
+	}
+
+	var importCmd = &cobra.Command{
+		Use:   "import <input-file>",
+		Short: "Import Git profiles from a JSON file",
+		Args:  cobra.ExactArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			inputPath := args[0]
+
+			if err := configManager.Import(inputPath); err != nil {
+				fmt.Println("Import failed:", err)
+				os.Exit(1)
+			}
+		},
+	}
+
+	rootCmd.AddCommand(exportCmd, importCmd)
+
 	var listCmd = &cobra.Command{
 		Use:   "ls",
 		Short: "List all saved Git profiles",
@@ -318,4 +350,80 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+func (cm *ConfigManager) Export(outputPath string) error {
+	// If no path provided, use default in home directory
+	if outputPath == "" {
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			return err
+		}
+		outputPath = filepath.Join(homeDir, "git-profiles-export.json")
+	}
+
+	// Ensure the file has .json extension
+	if filepath.Ext(outputPath) != ".json" {
+		outputPath += ".json"
+	}
+
+	// Marshal profiles to JSON
+	data, err := json.MarshalIndent(cm.Profiles, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	// Write to file
+	if err := os.WriteFile(outputPath, data, 0644); err != nil {
+		return err
+	}
+
+	fmt.Printf("Profiles exported to: %s\n", outputPath)
+	return nil
+}
+
+func (cm *ConfigManager) Import(inputPath string) error {
+	// Read the input file
+	data, err := os.ReadFile(inputPath)
+	if err != nil {
+		return err
+	}
+
+	// Unmarshal the JSON data
+	var importedProfiles map[string]Profile
+	if err := json.Unmarshal(data, &importedProfiles); err != nil {
+		return err
+	}
+
+	// Prompt for import strategy
+	prompt := promptui.Select{
+		Label: "Import Strategy",
+		Items: []string{
+			"Merge (Add new profiles, keep existing)",
+			"Replace (Overwrite all existing profiles)",
+		},
+	}
+
+	_, strategy, err := prompt.Run()
+	if err != nil {
+		return fmt.Errorf("import cancelled")
+	}
+
+	// Apply import strategy
+	switch strategy {
+	case "Merge (Add new profiles, keep existing)":
+		for name, profile := range importedProfiles {
+			if _, exists := cm.Profiles[name]; !exists {
+				cm.Profiles[name] = profile
+			}
+		}
+	case "Replace (Overwrite all existing profiles)":
+		cm.Profiles = importedProfiles
+	}
+
+	// Save the updated profiles
+	cm.save()
+
+	fmt.Printf("Profiles imported successfully. Total profiles: %d\n", len(cm.Profiles))
+	return nil
 }

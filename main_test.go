@@ -159,3 +159,49 @@ func TestProfileRemoval(t *testing.T) {
 	_, exists := cm.Profiles["work"]
 	assert.False(t, exists)
 }
+
+// TestExport tests the Export function
+func TestExport(t *testing.T) {
+	// Create a temporary directory for testing
+	tmpDir, err := os.MkdirTemp("", "git-profile-test")
+	assert.NoError(t, err)
+	defer os.RemoveAll(tmpDir)
+
+	// Create a test config path
+	testConfigPath := filepath.Join(tmpDir, ".git-profiles-test.json")
+
+	// Create a config manager with the test path
+	cm := &ConfigManager{
+		ConfigPath: testConfigPath,
+		Profiles:   make(map[string]Profile),
+	}
+
+	// Add a profile
+	cm.Profiles["work"] = Profile{
+		Name:  "John Doe",
+		Email: "john.doe@example.com",
+	}
+
+	// Export profiles
+	exportPath := filepath.Join(tmpDir, "exported-profiles.json")
+	err = cm.Export(exportPath)
+	assert.NoError(t, err)
+
+	// Verify the file was created
+	_, err = os.Stat(exportPath)
+	assert.NoError(t, err)
+
+	// Read the file contents
+	data, err := os.ReadFile(exportPath)
+	assert.NoError(t, err)
+
+	// Verify the contents
+	var exportedProfiles map[string]Profile
+	err = json.Unmarshal(data, &exportedProfiles)
+	assert.NoError(t, err)
+	assert.Contains(t, exportedProfiles, "work")
+	assert.Equal(t, "John Doe", exportedProfiles["work"].Name)
+	assert.Equal(t, "john.doe@example.com", exportedProfiles["work"].Email)
+}
+
+// TODO: Test import functionality
