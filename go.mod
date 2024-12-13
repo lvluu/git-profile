@@ -1,4 +1,4 @@
-module gitprofile
+module github.com/lvluu/git-profile
 
 go 1.23.3
 
