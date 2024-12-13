@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	version = "dev" // Default to 'dev' if not set during build
+	version = "dev"
 	commit  = "none"
 	date    = "unknown"
 )
