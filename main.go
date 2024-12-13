@@ -153,7 +153,7 @@ func main() {
 
 	var rootCmd = &cobra.Command{
 		Use:     "git-profile",
-		Short:   "Manage multiple Git profiles easily",
+		Short:   "🦑 Manage multiple Git profiles easily",
 		Version: fmt.Sprintf("%s (commit: %s, built: %s)", version, commit, date),
 	}
 
