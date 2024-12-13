@@ -14,7 +14,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const version = "0.2.0"
+var (
+	version = "dev" // Default to 'dev' if not set during build
+	commit  = "none"
+	date    = "unknown"
+)
 
 // Profile represents a Git profile with name, email, and optional additional config
 type Profile struct {
@@ -130,11 +134,11 @@ func main() {
 
 	var rootCmd = &cobra.Command{
 		Use:     "git-profile",
-		Version: version,
+		Short:   "Manage multiple Git profiles easily",
+		Version: fmt.Sprintf("%s (commit: %s, built: %s)", version, commit, date),
 	}
 
-	// Version flag
-	rootCmd.PersistentFlags().BoolP("version", "v", false, "Show version information")
+	rootCmd.SetVersionTemplate("Git Profile CLI\nVersion: {{.Version}}")
 
 	var listCmd = &cobra.Command{
 		Use:   "ls",
