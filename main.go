@@ -129,6 +129,25 @@ func interactiveProfileInput(existing *Profile) Profile {
 	return profile
 }
 
+// getActiveProfile retrieves the currently active Git profile from the global Git config
+func getActiveProfile() (string, string, error) {
+	nameCmd := exec.Command("git", "config", "user.name")
+	nameOutput, err := nameCmd.Output()
+	if err != nil {
+		return "", "", err
+	}
+	name := strings.TrimSpace(string(nameOutput))
+
+	emailCmd := exec.Command("git", "config", "user.email")
+	emailOutput, err := emailCmd.Output()
+	if err != nil {
+		return "", "", err
+	}
+	email := strings.TrimSpace(string(emailOutput))
+
+	return name, email, nil
+}
+
 func main() {
 	configManager := NewConfigManager()
 
@@ -181,8 +200,18 @@ func main() {
 				return
 			}
 
+			activeName, activeEmail, err := getActiveProfile()
+			if err != nil {
+				fmt.Println("Error retrieving active profile:", err)
+				return
+			}
+
 			for name, profile := range configManager.Profiles {
-				fmt.Printf("Profile: %s\n", name)
+				activeMarker := ""
+				if profile.Name == activeName && profile.Email == activeEmail {
+					activeMarker = " (active)"
+				}
+				fmt.Printf("Profile: %s%s\n", name, activeMarker)
 				fmt.Printf("  Name:  %s\n", profile.Name)
 				fmt.Printf("  Email: %s\n", profile.Email)
 				if profile.Signing.Key != "" {
@@ -328,8 +357,8 @@ func main() {
 			profile := configManager.Profiles[selectedProfile]
 
 			gitCommands := [][]string{
-				{"config", "--global", "user.name", profile.Name},
-				{"config", "--global", "user.email", profile.Email},
+				{"config", "user.name", profile.Name},
+				{"config", "user.email", profile.Email},
 			}
 
 			for _, gitCmd := range gitCommands {
