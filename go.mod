@@ -4,7 +4,7 @@ go 1.23.3
 
 require (
 	github.com/manifoldco/promptui v0.9.0
-	github.com/spf13/cobra v1.8.0
+	github.com/spf13/cobra v1.8.1
 	github.com/stretchr/testify v1.10.0
 )
 
